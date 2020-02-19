@@ -1,9 +1,11 @@
 const assert = require('assert');
+// local test network
 const ganache = require('ganache-cli');
 const Web3 = require('web3');
-const web3 = new Web3(ganache.provider());
+const provider = ganache.provider();
+const web3 = new Web3(provider);
 const mocha = require('mocha');
-const {interface, bytecode} = require('../compile');
+const { interface, bytecode } = require('../compile');
 
 let accounts;
 let inbox;
@@ -11,17 +13,30 @@ let inbox;
 mocha.beforeEach(async () => {
     // get list of accounts
     accounts = await web3.eth.getAccounts();
-
     // deploy a contract to an account
     inbox = await new web3.eth.Contract(JSON.parse(interface))
         .deploy({data: bytecode, arguments: ['Hello']})
-        .send({from: accounts[0], gas: '1000000'})
+        .send({from: accounts[0], gas: '1000000'});
+
+    inbox.setProvider(provider);
 });
 
 mocha.describe('Inbox', () => {
-    mocha.it('deploy a contract', () => {
-        console.log(inbox)
+    mocha.it('deploys a contract', () => {
+        assert.ok(inbox.options.address);
     });
+
+    mocha.it('has default message', async () => {
+        const msg = await inbox.methods.message().call();
+        assert.strictEqual(msg, 'Hello')
+    });
+
+    mocha.it('can modify message', async () => {
+       await inbox.methods.setMessage('Hi').send({from: accounts[0]});
+       const msg = await inbox.methods.message().call();
+       assert.strictEqual(msg, 'Hi')
+    });
+
 });
 
 
