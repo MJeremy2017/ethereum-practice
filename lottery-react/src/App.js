@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import logo from './logo.svg';
 import web3 from "./web3";
 import './App.css';
 import lottery from "./lottery";
@@ -9,10 +8,11 @@ class App extends Component {
         manager: '',
         players: [],
         balance: '',
-        value: ''
+        value: '',
+        message: ''
     };
 
-    // override method that will be called after each render
+    // override method that will be called after the FIRST render
     async componentDidMount() {
         const manager = await lottery.methods.manager().call();  // the call is from a default account
         const players = await lottery.methods.getPlayers().call();
@@ -21,15 +21,30 @@ class App extends Component {
     }
 
     onSubmit = async (event) => {
-        // prevent default submit
         event.preventDefault();
 
         const accounts = await web3.eth.getAccounts();
+
+        this.setState({ message: 'Waiting on transaction success...' });
 
         await lottery.methods.enter().send({
             from: accounts[0],
             value: web3.utils.toWei(this.state.value, 'ether')
         });
+
+        this.setState({ message: 'You have been entered!' });
+    };
+
+    onClick = async () => {
+        const accounts = await web3.eth.getAccounts();
+
+        this.setState({ message: 'Picking a winner ...' });
+
+        await lottery.methods.pickWinner().send({
+            from: accounts[0],
+        });
+
+        this.setState({ message: 'Winner has been picked' });
     };
 
     render() {
@@ -57,6 +72,14 @@ class App extends Component {
                 </form>
 
                 <hr />
+
+                <h4>Ready to Pick a winner?</h4>
+                <button onClick={this.onClick}>Pick a winner</button>
+
+                <hr />
+                <h1>
+                    {this.state.message}
+                </h1>
             </div>
 
         );
