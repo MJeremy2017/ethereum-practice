@@ -29,19 +29,19 @@ contract Campaign {
 
     // storage variables
     Request[] public requests;
-    address public manger;
+    address public manager;
     uint minimumContribution;
     // store people who has backed up
     mapping(address => bool) public approvers;
     uint approversCount;
 
     modifier restricted() {
-        require(msg.sender == manger);
+        require(msg.sender == manager);
         _;
     }
 
     constructor(uint minimum, address creator) public {
-        manger = creator;
+        manager = creator;
         minimumContribution = minimum;
     }
 
