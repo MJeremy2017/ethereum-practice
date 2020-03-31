@@ -1,11 +1,13 @@
 import React from 'react';
+import Header from "./Header";
+import {Container} from "semantic-ui-react";
 
 export default (props) => {
+    // place everything inside a container so that width is restricted
     return (
-        <div>
-            <h1>This is a header</h1>
+        <Container>
+            <Header/>
             {props.children}
-            <h1>This is a footer</h1>
-        </div>
+        </Container>
     )
 };
