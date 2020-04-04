@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import Layout from "../components/Layout";
+import Layout from "../../components/Layout";
 import { Button, Form, Input, Message } from 'semantic-ui-react'
-import factory from '../ethereum/factory'
-import web3 from '../ethereum/web3'
-import {Router} from '../routes'
+import factory from '../../ethereum/factory'
+import web3 from '../../ethereum/web3'
+import {Router} from '../../routes'
 
 class CampaignNew extends Component {
     state = {
@@ -24,6 +24,8 @@ class CampaignNew extends Component {
                 .send({
                     from: accounts[0]
                 });
+            // after done, route to the main page
+            Router.pushRoute('/');
 
         } catch (err) {
             this.setState({errMessage: err.message});
