@@ -8,11 +8,10 @@ if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
     web3 = new Web3(window.web3.currentProvider);
     console.log("Metamask used");
     const getAccounts = async () => {
-        const accounts = await web3.eth.getAccounts();
-        return accounts;
+        return await web3.eth.getAccounts();
     };
 
-    console.log('first account is ', getAccounts()[0]);
+    console.log('first account is ', getAccounts[0]);
 } else {
     // connect to rinkeby network through infura node
     console.log('not Metamask');
