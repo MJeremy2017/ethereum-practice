@@ -4,6 +4,7 @@ import web3 from "../ethereum/web3";
 import Campaign from "../../../ethereum/campaign";
 
 // Render on Row in a Table
+// expr ? b : c; if request complete, hide the button
 class RequestRow extends Component {
 
     onApprove = async () => {
@@ -12,23 +13,38 @@ class RequestRow extends Component {
       await campaign.methods.approveRequest(this.props.id).send({from: accounts[0]});
     };
 
+    onFinalize = async () => {
+        const campaign = Campaign(this.props.address);
+        const accounts = await web3.eth.getAccounts();
+        await campaign.methods.finalizeRequest(this.props.id).send({from: accounts[0]});
+    };
+
     render() {
         const {Row, Cell} = Table;
         const {id, request, approversCount} = this.props;
+        const readyToFinalize = request.approvalCount > approversCount/2;
 
         return (
-            <Row>
+            <Row disabled={request.complete} positive={readyToFinalize && !request.complete}>
                 <Cell>{id}</Cell>
                 <Cell>{request.description}</Cell>
                 <Cell>{web3.utils.fromWei(request.value, 'ether')}</Cell>
                 <Cell>{request.recipient}</Cell>
                 <Cell>{request.approvalCount}/{approversCount}</Cell>
                 <Cell>
-                    <Button color={'green'} basic onClick={this.onApprove}>
-                        Approve
-                    </Button>
+                    {request.complete ? null : (
+                        <Button color={'green'} basic onClick={this.onApprove}>
+                            Approve
+                        </Button>
+                    )}
                 </Cell>
-                <Cell></Cell>
+                <Cell>
+                    {request.complete ? null : (
+                        <Button color={'teal'} basic onClick={this.onFinalize}>
+                            Finalize
+                        </Button>
+                    )}
+                </Cell>
             </Row>
         );
     }
