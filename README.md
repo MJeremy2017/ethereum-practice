@@ -1,3 +1,3 @@
-# ethereum-practice
+# Ethereum Practice
 ---
 ETH & Solidity & JS
