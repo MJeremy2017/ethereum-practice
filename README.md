@@ -1,3 +1,3 @@
 # Ethereum Practice
 ---
-ETH & Solidity & JS
+Javascript and Solidity App
